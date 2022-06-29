@@ -1,5 +1,6 @@
 package studio.example.lecture.api;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,10 @@ import studio.example.lecture.domain.Lecture;
 import studio.example.lecture.error.StartTimeGoeEndTimeException;
 import studio.example.lecture.repo.LectureRepository;
 import studio.example.lecture.service.LectureService;
+import studio.example.model.ResultDto;
+
+import static studio.example.lecture.api.LectureBackOfficeController.LectureDto.*;
+import static studio.example.lecture.api.LectureBackOfficeController.LectureDto.createLectureDto;
 
 @RestController
 @RequestMapping("/back-office/lectures")
@@ -48,6 +53,24 @@ public class LectureBackOfficeController {
         );
         lectureService.addLecture(lecture);
 
-        return new ResponseEntity<>(form, HttpStatus.CREATED);
+        return new ResponseEntity<>(ResultDto.builder()
+                .content(createLectureDto(lecture.getId(), lecture.getPlace(), lecture.getLecturer()))
+                .build(),
+                HttpStatus.OK);
     }
+
+    @Getter
+    static class LectureDto {
+        private Long id;
+        private String place;
+        private String lecturer;
+        public static LectureDto createLectureDto(Long id, String place, String lecturer) {
+            LectureDto dto = new LectureDto();
+            dto.id = id;
+            dto.place = place;
+            dto.lecturer = lecturer;
+            return dto;
+        }
+    }
+
 }
