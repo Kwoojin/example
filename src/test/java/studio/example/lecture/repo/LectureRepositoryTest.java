@@ -35,7 +35,7 @@ class LectureRepositoryTest {
     }
 
     @Test
-    @DisplayName("기간 & 장소 중복 검사")
+    @DisplayName("장소가 같고 시간이 겹치는 것이 2개")
     public void findLectureDuplicatePlaceCheck() {
         LocalDateTime now = LocalDateTime.now();
         String place = "same";
@@ -56,16 +56,46 @@ class LectureRepositoryTest {
         List<Lecture> results1 = lectureRepository.findLectureDuplicatePlaceCheck(startTime, endTime, place);
         assertThat(results1.size()).isEqualTo(2);
         assertThat(results1).containsExactly(lecture1, lecture2);
+    }
 
-        //기간은 겹치지만 장소가 다를 때
-        startTime = now.plusDays(1);
-        endTime = now.plusDays(2).plusHours(1);
+    @Test
+    @DisplayName("기간은 겹치지만 장소가 다를 때")
+    public void findLectureDuplicatePlaceCheck2() {
+        LocalDateTime now = LocalDateTime.now();
+        String place = "same";
+        Lecture lecture1 = createLecture("강연명", place, "강사", 100, now.plusDays(1), now.plusDays(1).plusHours(1), "content");
+        Lecture lecture2 = createLecture("강연명", place, "강사", 100, now.plusDays(2), now.plusDays(2).plusHours(1), "content");
+        Lecture lecture3 = createLecture("강연명", place, "강사", 100, now.plusDays(3), now.plusDays(3).plusHours(1), "content");
+        em.persist(lecture1);
+        em.persist(lecture2);
+        em.persist(lecture3);
+
+        em.flush();
+        em.clear();
+
+        LocalDateTime startTime = now.plusDays(1);
+        LocalDateTime endTime = now.plusDays(2).plusHours(1);
         List<Lecture> results2 = lectureRepository.findLectureDuplicatePlaceCheck(startTime, endTime, "diff");
         assertThat(results2.size()).isEqualTo(0);
+    }
 
-        //장소가 같지만 기간이 다를 때
-        startTime = now.plusDays(1).plusHours(2);
-        endTime = now.plusDays(1).plusHours(4);
+    @Test
+    @DisplayName("장소가 같지만 기간이 다를 때")
+    public void findLectureDuplicatePlaceCheck3() {
+        LocalDateTime now = LocalDateTime.now();
+        String place = "same";
+        Lecture lecture1 = createLecture("강연명", place, "강사", 100, now.plusDays(1), now.plusDays(1).plusHours(1), "content");
+        Lecture lecture2 = createLecture("강연명", place, "강사", 100, now.plusDays(2), now.plusDays(2).plusHours(1), "content");
+        Lecture lecture3 = createLecture("강연명", place, "강사", 100, now.plusDays(3), now.plusDays(3).plusHours(1), "content");
+        em.persist(lecture1);
+        em.persist(lecture2);
+        em.persist(lecture3);
+
+        em.flush();
+        em.clear();
+
+        LocalDateTime startTime = now.plusDays(1).plusHours(2);
+        LocalDateTime endTime = now.plusDays(1).plusHours(4);
         List<Lecture> results3 = lectureRepository.findLectureDuplicatePlaceCheck(startTime, endTime, place);
 
         assertThat(results3.size()).isEqualTo(0);
