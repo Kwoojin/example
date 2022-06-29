@@ -1,6 +1,8 @@
 package studio.example.reservation.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import studio.example.lecture.domain.Lecture;
@@ -28,7 +30,6 @@ public class ReservationService {
 
     @Transactional
     public long addReservation(String empNo, Long lectureId) {
-
         Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new NoSuchLectureByIdException("Couldn't find a lecture that matches the id"));
         if (LocalDateTime.now().isAfter(lecture.getStartTime()))
@@ -41,5 +42,10 @@ public class ReservationService {
         Reservation reservation = Reservation.createReservation(member, lecture);
         reservationRepository.save(reservation);
         return reservation.getId();
+    }
+
+    public Page<Reservation> getReservation(String empNo, Pageable pageable) {
+        Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
+        return reservationRepository.findListByMember(member, pageable);
     }
 }
