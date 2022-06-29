@@ -16,8 +16,8 @@ public class LectureExceptionHandler {
             StartTimeGoeEndTimeException.class,
             DuplicatePlaceAndTimeException.class
     })
-    public ResponseEntity<ErrorResult> handleStartTimeGoeEndTimeException(RuntimeException e) {
-        log.error("[handleStartTimeGoeEndTimeException]", e);
+    public ResponseEntity<ErrorResult> handleRuntimeException(RuntimeException e) {
+        log.error("[{}]", e.getClass(),e);
         ErrorResult errorResult = new ErrorResult(e.getMessage());
         return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
     }
