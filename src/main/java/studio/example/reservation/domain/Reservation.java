@@ -1,10 +1,7 @@
 package studio.example.reservation.domain;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import studio.example.lecture.domain.Lecture;
 import studio.example.member.domain.Member;
 import studio.example.model.BaseTimeEntity;
@@ -37,7 +34,7 @@ public class Reservation extends BaseTimeEntity {
         Reservation dto = new Reservation();
         dto.member = member;
         dto.lecture = lecture;
-        dto.status = ReservationStatus.RESERVATION;
+        dto.status = ReservationStatus.COMPLETE;
 
         lecture.reservationLecture();
         return dto;
