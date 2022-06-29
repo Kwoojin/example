@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ReservationLectureDto {
 
+    private Long id;
     private String title;
     private String place;
     private String lecturer;
@@ -17,9 +18,9 @@ public class ReservationLectureDto {
     private String content;
     private ReservationStatus status;
 
-
     public static ReservationLectureDto createReservationLectureDto(Lecture lecture, ReservationStatus status) {
         ReservationLectureDto dto = new ReservationLectureDto();
+        dto.id = lecture.getId();
         dto.title = lecture.getTitle();
         dto.place = lecture.getPlace();
         dto.lecturer = lecture.getLecturer();

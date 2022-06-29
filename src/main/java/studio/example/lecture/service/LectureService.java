@@ -26,8 +26,8 @@ public class LectureService {
             throw new DuplicatePlaceAndTimeException("There is already another lecture at that time and place");
         }
 
-        Lecture saveLecture = lectureRepository.save(lecture);
-        return saveLecture.getId();
+        lectureRepository.save(lecture);
+        return lecture.getId();
     }
 
     public Page<Lecture> searchLecturePeriod(Pageable pageable) {
