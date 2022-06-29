@@ -38,6 +38,8 @@ public class Reservation extends BaseTimeEntity {
         dto.member = member;
         dto.lecture = lecture;
         dto.status = ReservationStatus.RESERVATION;
+
+        lecture.reservationLecture();
         return dto;
     }
 

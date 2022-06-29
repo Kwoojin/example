@@ -14,7 +14,8 @@ public class LectureExceptionHandler {
 
     @ExceptionHandler({
             StartTimeGoeEndTimeException.class,
-            DuplicatePlaceAndTimeException.class
+            DuplicatePlaceAndTimeException.class,
+            NotEnoughSeatException.class
     })
     public ResponseEntity<ErrorResult> handleRuntimeException(RuntimeException e) {
         log.error("[{}]", e.getClass(),e);

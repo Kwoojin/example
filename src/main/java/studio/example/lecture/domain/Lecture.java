@@ -2,6 +2,7 @@ package studio.example.lecture.domain;
 
 import lombok.*;
 import org.springframework.util.StringUtils;
+import studio.example.lecture.error.NotEnoughSeatException;
 import studio.example.lecture.error.StartTimeGoeEndTimeException;
 import studio.example.model.BaseTimeEntity;
 
@@ -47,6 +48,14 @@ public class Lecture extends BaseTimeEntity {
         dto.endTime = endTime;
         dto.content = content;
         return dto;
+    }
+
+    public void reservationLecture() {
+        int remainingNumberSeats = this.remainingNumberSeats -1;
+        if(remainingNumberSeats < 0) {
+            throw new NotEnoughSeatException("All seats are reserved and cannot be reserved");
+        }
+        this.remainingNumberSeats = remainingNumberSeats;
     }
 
     @Override
