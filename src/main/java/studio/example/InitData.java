@@ -41,7 +41,7 @@ public class InitData {
             List<Lecture> lectures = new ArrayList<>();
             for(int i=1; i<=20; i++){
                 Lecture lecture = createLecture(
-                        "title" + i, "place" + i, "lecturer" + i, 30 + i, now.minusDays(2).plusHours(i * 3), now.minusDays(2).plusHours(i * 3 + 1), "content" + i
+                        "title" + i, "place" + i, "lecturer" + i, 30 + i, now.minusDays(3).plusHours(i * 13), now.minusDays(3).plusHours(i * 13 + 1), "content" + i
                 );
                 lectures.add(lecture);
                 em.persist(lecture);
