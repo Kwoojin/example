@@ -2,13 +2,12 @@ package studio.example.reservation.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import studio.example.reservation.api.dto.ReservationLectureDto;
+import studio.example.model.ResultDto;
 import studio.example.reservation.service.ReservationService;
+
+import java.util.stream.Collectors;
 
 import static studio.example.reservation.api.ReservationFrontController.ReservationDto.*;
 import static studio.example.reservation.api.dto.ReservationLectureDto.*;
@@ -21,15 +20,19 @@ public class ReservationFrontController {
     private final ReservationService reservationService;
 
     @PostMapping("/{lectureId}")
-    public ResponseEntity<?> addReservation(@RequestBody String empNo, @PathVariable Long lectureId) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResultDto addReservation(@RequestBody String empNo, @PathVariable Long lectureId) {
         long id = reservationService.addReservation(empNo, lectureId);
-        return new ResponseEntity<>(createReservationDto(id, empNo, lectureId), HttpStatus.CREATED);
+        return ResultDto.builder().content((createReservationDto(id, empNo, lectureId))).build();
     }
 
     @GetMapping
-    public Page<ReservationLectureDto> getReservation(@RequestBody String empNo, Pageable pageable) {
-        return reservationService.getReservation(empNo, pageable)
-                .map(r -> createReservationLectureDto(r.getLecture(), r.getStatus()));
+    public ResultDto getReservation(@RequestBody String empNo) {
+        return ResultDto.builder()
+                .content(reservationService.getReservation(empNo).stream()
+                        .map(r -> createReservationLectureDto(r.getLecture(), r.getStatus()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Getter

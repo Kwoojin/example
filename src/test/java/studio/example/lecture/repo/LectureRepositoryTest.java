@@ -123,11 +123,9 @@ class LectureRepositoryTest {
 
         LocalDateTime displayStartTime = LocalDateTime.now().minusDays(1);
         LocalDateTime displayEndTime = LocalDateTime.now().plusDays(7);
-        PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<Lecture> results = lectureRepository.findLecturePeriod(displayStartTime, displayEndTime, pageRequest);
-        List<Lecture> content = results.getContent();
+        List<Lecture> results = lectureRepository.findLecturePeriod(displayStartTime, displayEndTime);
 
-        assertThat(content.size()).isEqualTo(4);
+        assertThat(results.size()).isEqualTo(4);
     }
 
     static int idx=0;

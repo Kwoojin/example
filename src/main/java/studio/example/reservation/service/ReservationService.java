@@ -1,8 +1,7 @@
 package studio.example.reservation.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import studio.example.lecture.domain.Lecture;
@@ -17,8 +16,10 @@ import studio.example.reservation.error.OverTimeLectureException;
 import studio.example.reservation.repo.ReservationRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,6 +31,7 @@ public class ReservationService {
 
     @Transactional
     public long addReservation(String empNo, Long lectureId) {
+        log.info("empNo = {}, lectureId = {}", empNo, lectureId);
         Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new NoSuchLectureByIdException("Couldn't find a lecture that matches the id"));
         if (LocalDateTime.now().isAfter(lecture.getStartTime()))
@@ -44,8 +46,8 @@ public class ReservationService {
         return reservation.getId();
     }
 
-    public Page<Reservation> getReservation(String empNo, Pageable pageable) {
+    public List<Reservation> getReservation(String empNo) {
         Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
-        return reservationRepository.findListByMember(member, pageable);
+        return reservationRepository.findListByMember(member);
     }
 }

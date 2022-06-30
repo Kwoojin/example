@@ -1,20 +1,21 @@
 package studio.example.lecture.api;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import studio.example.lecture.api.dto.LectureDto;
 import studio.example.lecture.api.dto.LectureSaveForm;
 import studio.example.lecture.domain.Lecture;
 import studio.example.lecture.repo.LectureRepository;
+import studio.example.lecture.repo.query.LectureQueryDto;
 import studio.example.lecture.service.LectureService;
+import studio.example.lecture.service.query.LectureQueryService;
 import studio.example.model.ResultDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static studio.example.lecture.api.dto.LectureDto.createLectureDto;
 
@@ -26,15 +27,21 @@ public class LectureBackOfficeController {
 
     private final LectureRepository lectureRepository;
     private final LectureService lectureService;
+    private final LectureQueryService lectureQueryService;
 
     @GetMapping
-    public Page<LectureDto> lectures(Pageable pageable) {
-        return lectureRepository.findAll(pageable)
-                .map(LectureDto::createLectureDto);
+    @ResponseStatus(HttpStatus.OK)
+    public ResultDto getLectures() {
+        return ResultDto.builder()
+                .content((lectureRepository.findAll().stream()
+                    .map(LectureDto::createLectureDto)
+                    .collect(Collectors.toList()))
+                ).build();
     }
 
     @PostMapping
-    public ResponseEntity<ResultDto> addLecture(@Validated @RequestBody LectureSaveForm form) {
+    @ResponseStatus(HttpStatus.OK)
+    public ResultDto addLecture(@Validated @RequestBody LectureSaveForm form) {
         Lecture lecture = Lecture.createLecture(
                 form.getTitle(),
                 form.getPlace(),
@@ -46,10 +53,17 @@ public class LectureBackOfficeController {
         );
         lectureService.addLecture(lecture);
 
-        return new ResponseEntity<>(ResultDto.builder()
+        return ResultDto.builder()
                 .content(createLectureDto(lecture))
-                .build(),
-                HttpStatus.OK);
+                .build();
+    }
+
+    @GetMapping("/members")
+    @ResponseStatus(HttpStatus.OK)
+    public ResultDto getMemberListByLectures() {
+        return ResultDto.builder()
+                .content(lectureQueryService.findMemberListByLecture())
+                .build();
     }
 
 }

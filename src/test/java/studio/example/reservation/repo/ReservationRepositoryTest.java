@@ -68,9 +68,8 @@ class ReservationRepositoryTest {
         em.flush();
         em.clear();
 
-        PageRequest pageRequest = PageRequest.of(0, 20);
-        Page<Reservation> results = reservationRepository.findListByMember(member, pageRequest);
-        List<Reservation> content = results.getContent();
-        assertThat(content.size()).isEqualTo(20);
+
+        List<Reservation> results = reservationRepository.findListByMember(member);
+        assertThat(results.size()).isEqualTo(20);
     }
 }

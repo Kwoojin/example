@@ -1,8 +1,6 @@
 package studio.example.lecture.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import studio.example.lecture.domain.Lecture;
@@ -30,9 +28,9 @@ public class LectureService {
         return lecture.getId();
     }
 
-    public Page<Lecture> searchLecturePeriod(Pageable pageable) {
+    public List<Lecture> searchLecturePeriod() {
         LocalDateTime displayStartTime = LocalDateTime.now().minusDays(1);
         LocalDateTime displayEndTime = LocalDateTime.now().plusDays(7);
-        return lectureRepository.findLecturePeriod(displayStartTime, displayEndTime, pageable);
+        return lectureRepository.findLecturePeriod(displayStartTime, displayEndTime);
     }
 }
