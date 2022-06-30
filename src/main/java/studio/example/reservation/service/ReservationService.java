@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import studio.example.lecture.domain.Lecture;
 import studio.example.lecture.repo.LectureRepository;
 import studio.example.member.domain.Member;
 import studio.example.member.repo.MemberRepository;
 import studio.example.reservation.domain.Reservation;
+import studio.example.reservation.domain.ReservationStatus;
 import studio.example.reservation.error.AlreadyMemberInLectureException;
 import studio.example.reservation.error.NoSuchLectureByIdException;
 import studio.example.reservation.error.NoSuchMemberByEmpNoException;
@@ -31,14 +34,14 @@ public class ReservationService {
 
     @Transactional
     public long addReservation(String empNo, Long lectureId) {
-        log.info("empNo = {}, lectureId = {}", empNo, lectureId);
+        Assert.hasText(empNo, "empNo must not be Null");
         Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new NoSuchLectureByIdException("Couldn't find a lecture that matches the id"));
         if (LocalDateTime.now().isAfter(lecture.getStartTime()))
             throw new OverTimeLectureException("Lecture that have already expired cannot be applied for");
 
         Optional<Reservation> findReservation = reservationRepository.findByMemberAndLecture(member, lecture);
-        if(findReservation.isPresent())
+        if(findReservation.isPresent() && findReservation.get().getStatus().equals(ReservationStatus.COMPLETE))
             throw new AlreadyMemberInLectureException("There is already a member registered in Lecture");
 
         Reservation reservation = Reservation.createReservation(member, lecture);
@@ -47,6 +50,11 @@ public class ReservationService {
     }
 
     public List<Reservation> getReservation(String empNo) {
+        Assert.hasText(empNo, "empNo must not be Null");
+
+        if(!StringUtils.hasText(empNo)){
+            throw new NullPointerException();
+        }
         Member member = memberRepository.findByEmpNo(empNo).orElseThrow(() -> new NoSuchMemberByEmpNoException("Couldn't find a member that matches the empNo"));
         return reservationRepository.findListByMember(member);
     }
