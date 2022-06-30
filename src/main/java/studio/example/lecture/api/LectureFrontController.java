@@ -22,7 +22,6 @@ public class LectureFrontController {
     private final LectureService lectureService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResultDto lectures() {
         return ResultDto.builder()
                 .content(lectureService.searchLecturePeriod().stream()
