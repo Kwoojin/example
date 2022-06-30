@@ -62,7 +62,7 @@ class LectureQueryServiceTest {
         em.flush();
         em.clear();
 
-        List<LectureQueryDto> results = lectureQueryService.findMemberListByLecture();
+        List<LectureQueryDto> results = lectureQueryService.findEmpNoListByLecture();
         for (LectureQueryDto lectureQueryDto : results) {
             System.out.println("lectureQueryDto = " + lectureQueryDto);
             for(String empNo : lectureQueryDto.getEmpNos()){

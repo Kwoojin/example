@@ -19,7 +19,7 @@ public class LectureQueryService {
 
     private final LectureRepository lectureRepository;
 
-    public List<LectureQueryDto> findMemberListByLecture() {
+    public List<LectureQueryDto> findEmpNoListByLecture() {
         List<LectureQueryDto> result = lectureRepository.searchPageLecture();
 
         List<Long> ids = toLectureIds(result);

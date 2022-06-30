@@ -2,19 +2,16 @@ package studio.example.lecture.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import studio.example.lecture.api.dto.LectureDto;
 import studio.example.lecture.api.dto.LectureSaveForm;
 import studio.example.lecture.domain.Lecture;
 import studio.example.lecture.repo.LectureRepository;
-import studio.example.lecture.repo.query.LectureQueryDto;
 import studio.example.lecture.service.LectureService;
 import studio.example.lecture.service.query.LectureQueryService;
 import studio.example.model.ResultDto;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static studio.example.lecture.api.dto.LectureDto.createLectureDto;
@@ -30,7 +27,6 @@ public class LectureBackOfficeController {
     private final LectureQueryService lectureQueryService;
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResultDto getLectures() {
         return ResultDto.builder()
                 .content((lectureRepository.findAll().stream()
@@ -40,7 +36,6 @@ public class LectureBackOfficeController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResultDto addLecture(@Validated @RequestBody LectureSaveForm form) {
         Lecture lecture = Lecture.createLecture(
                 form.getTitle(),
@@ -58,11 +53,10 @@ public class LectureBackOfficeController {
                 .build();
     }
 
-    @GetMapping("/members")
-    @ResponseStatus(HttpStatus.OK)
-    public ResultDto getMemberListByLectures() {
+    @GetMapping("/empNos")
+    public ResultDto getEmpNoListByLectures() {
         return ResultDto.builder()
-                .content(lectureQueryService.findMemberListByLecture())
+                .content(lectureQueryService.findEmpNoListByLecture())
                 .build();
     }
 
