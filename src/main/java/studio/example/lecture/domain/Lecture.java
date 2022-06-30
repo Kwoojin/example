@@ -6,21 +6,23 @@ import studio.example.lecture.error.NotEnoughSeatException;
 import studio.example.lecture.error.StartTimeGoeEndTimeException;
 import studio.example.model.BaseTimeEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@SequenceGenerator(
+        name="lecture_seq_generator",
+        sequenceName = "lecture_seq",
+        initialValue = 1, allocationSize = 50
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
 public class Lecture extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "lecture_seq_generator")
     @Column(name = "lecture_id")
     private Long id;
 

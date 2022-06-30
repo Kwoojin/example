@@ -10,21 +10,26 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@SequenceGenerator(
+        name="reservation_seq_generator",
+        sequenceName = "reservation_seq",
+        initialValue = 1, allocationSize = 50
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reservation_seq_generator")
     @Column(name = "reservation_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(name = "fk_reservation_to_member"))
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_id")
+    @JoinColumn(name = "lecture_id", foreignKey = @ForeignKey(name = "fk_reservation_to_lecture"))
     private Lecture lecture;
 
     @Enumerated(EnumType.STRING)
