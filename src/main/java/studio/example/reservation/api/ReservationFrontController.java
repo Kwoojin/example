@@ -2,9 +2,9 @@ package studio.example.reservation.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import studio.example.model.ResultDto;
+import studio.example.reservation.api.dto.ReservationAddForm;
 import studio.example.reservation.service.ReservationService;
 
 import java.util.stream.Collectors;
@@ -20,14 +20,13 @@ public class ReservationFrontController {
     private final ReservationService reservationService;
 
     @PostMapping("/{lectureId}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResultDto addReservation(@RequestBody String empNo, @PathVariable Long lectureId) {
-        long id = reservationService.addReservation(empNo, lectureId);
-        return ResultDto.builder().content((createReservationDto(id, empNo, lectureId))).build();
+    public ResultDto addReservation(@RequestBody ReservationAddForm form, @PathVariable Long lectureId) {
+        long id = reservationService.addReservation(form.getEmpNo(), lectureId);
+        return ResultDto.builder().content((createReservationDto(id, form.getEmpNo(), lectureId))).build();
     }
 
     @GetMapping
-    public ResultDto getReservation(@RequestBody String empNo) {
+    public ResultDto getReservation(@RequestParam String empNo) {
         return ResultDto.builder()
                 .content(reservationService.getReservation(empNo).stream()
                         .map(r -> createReservationLectureDto(r.getLecture(), r.getStatus()))
