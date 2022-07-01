@@ -40,7 +40,7 @@ create table reservation (
     reservation_id          bigint          NOT NULL AUTO_INCREMENT,    --예약 PK
     lecture_id              bigint          NOT NULL,                   --강연 PK (lecture 참고)
     member_id               bigint          NOT NULL,                   --회원 PK (member 참고)
-    status                  varchar(10),                                --예약 상태 'COMPLETE', 'CANCEL'
+    status                  varchar(10)     NOT NULL,                   --예약 상태 'COMPLETE', 'CANCEL'
     created_date            datetime        NOT NULL,
     last_modified_date      datetime        NOT NULL,
     PRIMARY KEY (reservation_id),
