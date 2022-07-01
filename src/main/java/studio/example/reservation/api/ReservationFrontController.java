@@ -13,7 +13,7 @@ import static studio.example.reservation.api.ReservationFrontController.Reservat
 import static studio.example.reservation.api.dto.ReservationLectureDto.*;
 
 @RestController
-@RequestMapping("/front/reservations")
+@RequestMapping("/reservations")
 @RequiredArgsConstructor
 public class ReservationFrontController {
 
