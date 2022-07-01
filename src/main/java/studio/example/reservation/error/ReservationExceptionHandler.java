@@ -16,7 +16,8 @@ public class ReservationExceptionHandler {
             NoSuchLectureByIdException.class,
             NoSuchMemberByEmpNoException.class,
             OverTimeLectureException.class,
-            IllegalArgumentException.class
+            IllegalArgumentException.class,
+            OverlapReservationLectureTimeException.class
     })
     public ResponseEntity<ErrorResult> handleRuntimeException(RuntimeException e) {
         log.error("[{}]", e.getClass(),e);

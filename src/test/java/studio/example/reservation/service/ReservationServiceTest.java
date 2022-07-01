@@ -11,10 +11,7 @@ import studio.example.lecture.domain.Lecture;
 import studio.example.lecture.error.NotEnoughSeatException;
 import studio.example.member.domain.Member;
 import studio.example.reservation.domain.Reservation;
-import studio.example.reservation.error.AlreadyMemberInLectureException;
-import studio.example.reservation.error.NoSuchLectureByIdException;
-import studio.example.reservation.error.NoSuchMemberByEmpNoException;
-import studio.example.reservation.error.OverTimeLectureException;
+import studio.example.reservation.error.*;
 import studio.example.reservation.repo.ReservationRepository;
 
 import javax.persistence.EntityManager;
@@ -111,25 +108,43 @@ class ReservationServiceTest {
     @Test
     @DisplayName("남은 자리가 없는 강연 신청 시")
     public void notEnoughSeatException() {
-        //given
         Member member = Member.builder().name("이름").empNo("X0100").build();
         em.persist(member);
 
-        Member member2 = Member.builder().name("이름2").empNo("X0101").build();
-        em.persist(member2);
-
         LocalDateTime now = LocalDateTime.now();
-        Lecture lecture = createLecture("강연명1", "장소1", "강사1", 1, now.plusDays(1), now.plusDays(1).plusHours(1), "content1");
-        em.persist(lecture);
+        Lecture lecture1 = createLecture("강연명1", "장소1", "강사1", 100, now.plusDays(1), now.plusDays(1).plusHours(3), "content1");
+        Lecture lecture2 = createLecture("강연명2", "장소2", "강사2", 100, now.plusDays(1).minusHours(1), now.plusDays(1).plusHours(2), "content2");
+        em.persist(lecture1);
+        em.persist(lecture2);
 
-        Reservation reservation = Reservation.createReservation(member, lecture);
+        Reservation reservation = Reservation.createReservation(member, lecture1);
         em.persist(reservation);
 
         em.flush();
         em.clear();
 
-        assertThatThrownBy(() -> reservationService.addReservation(member2.getEmpNo(), lecture.getId()))
-                .isInstanceOf(NotEnoughSeatException.class);
+        assertThatThrownBy(() -> reservationService.addReservation(member.getEmpNo(), lecture2.getId()))
+                .isInstanceOf(OverlapReservationLectureTimeException.class);
+    }
+
+    @Test
+    @DisplayName("예약하려는 강연과 예약된 강연 중에 시간이 중복 될 시")
+    public void OverlapReservationLectureTimeException() {
+        //given
+        Member member = Member.builder().name("이름").empNo("X0100").build();
+        em.persist(member);
+
+        LocalDateTime now = LocalDateTime.now();
+        Lecture lecture = createLecture("강연명1", "장소1", "강사1", 100, now.plusDays(1), now.plusDays(1).plusHours(1), "content1");
+        em.persist(lecture);
+
+        em.flush();
+        em.clear();
+
+
+        // 존재 하지 않는 사번
+        assertThatThrownBy(() -> reservationService.addReservation("I0100", lecture.getId()))
+                .isInstanceOf(NoSuchMemberByEmpNoException.class);
     }
 
 

@@ -12,10 +12,7 @@ import studio.example.member.domain.Member;
 import studio.example.member.repo.MemberRepository;
 import studio.example.reservation.domain.Reservation;
 import studio.example.reservation.domain.ReservationStatus;
-import studio.example.reservation.error.AlreadyMemberInLectureException;
-import studio.example.reservation.error.NoSuchLectureByIdException;
-import studio.example.reservation.error.NoSuchMemberByEmpNoException;
-import studio.example.reservation.error.OverTimeLectureException;
+import studio.example.reservation.error.*;
 import studio.example.reservation.repo.ReservationRepository;
 
 import java.time.LocalDateTime;
@@ -40,9 +37,13 @@ public class ReservationService {
         if (LocalDateTime.now().isAfter(lecture.getStartTime()))
             throw new OverTimeLectureException("Lecture that have already expired cannot be applied for");
 
-        Optional<Reservation> findReservation = reservationRepository.findByMemberAndLecture(member, lecture);
-        if(findReservation.isPresent() && findReservation.get().getStatus().equals(ReservationStatus.COMPLETE))
+        Optional<Reservation> findReservation = reservationRepository.findByMemberAndLectureAndStatus(member, lecture, ReservationStatus.COMPLETE);
+        if(findReservation.isPresent())
             throw new AlreadyMemberInLectureException("There is already a member registered in Lecture");
+
+        List<Reservation> reservationInTime = reservationRepository.findReservationInTime(member, ReservationStatus.COMPLETE, lecture.getStartTime(), lecture.getEndTime());
+        if(reservationInTime.size()>0)
+            throw new OverlapReservationLectureTimeException("There is already a member registered in Lecture");
 
         Reservation reservation = Reservation.createReservation(member, lecture);
         reservationRepository.save(reservation);

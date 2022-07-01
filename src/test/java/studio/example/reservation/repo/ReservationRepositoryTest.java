@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import studio.example.lecture.domain.Lecture;
 import studio.example.member.domain.Member;
 import studio.example.reservation.domain.Reservation;
+import studio.example.reservation.domain.ReservationStatus;
 
 import javax.persistence.EntityManager;
 
@@ -29,7 +30,7 @@ class ReservationRepositoryTest {
     @Autowired EntityManager em;
 
     @Test
-    public void findByMemberAndLecture() {
+    public void findByMemberAndLectureAndStatus() {
         //given
         Member member = Member.builder().name("이름").empNo("X0100").build();
         em.persist(member);
@@ -45,7 +46,7 @@ class ReservationRepositoryTest {
         em.clear();
 
         //when
-        Reservation findReservation = reservationRepository.findByMemberAndLecture(member, lecture).orElseThrow();
+        Reservation findReservation = reservationRepository.findByMemberAndLectureAndStatus(member, lecture, ReservationStatus.COMPLETE).orElseThrow();
 
         //then
         assertThat(findReservation).isEqualTo(reservation);
@@ -68,8 +69,28 @@ class ReservationRepositoryTest {
         em.flush();
         em.clear();
 
-
         List<Reservation> results = reservationRepository.findListByMember(member);
         assertThat(results.size()).isEqualTo(20);
+    }
+
+    @Test
+    public void findReservationInTime() {
+        Member member = Member.builder().name("이름").empNo("X0100").build();
+        em.persist(member);
+
+        LocalDateTime now = LocalDateTime.now();
+        Lecture lecture1 = createLecture("강연명1", "장소1", "강사1", 100, now.plusDays(1), now.plusDays(1).plusHours(3), "content1");
+        Lecture lecture2 = createLecture("강연명2", "장소2", "강사2", 100, now.plusDays(1).minusHours(1), now.plusDays(1).plusHours(2), "content2");
+        em.persist(lecture1);
+        em.persist(lecture2);
+
+        Reservation reservation = Reservation.createReservation(member, lecture1);
+        em.persist(reservation);
+
+        em.flush();
+        em.clear();
+
+        List<Reservation> results = reservationRepository.findReservationInTime(member, ReservationStatus.COMPLETE, lecture2.getStartTime(), lecture2.getEndTime());
+        assertThat(results.size()).isEqualTo(1);
     }
 }
