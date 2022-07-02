@@ -247,5 +247,5 @@ H2
    studio.example.lecture.service.LectureService
 2. 강연 등록 입력 부분에서 강연명이 필요하지 않을까 싶어 title 을 추가했지만, title이 없을 경우 강사명으로 대체
 3. studio.example.InitData - 테스트 데이터 추가 및 memoryDB 사용 시 data.sql 을 위한 query 생성용
-4. 추후 URI /back-office/** - Filter 통해 Authorization 검증 (JWT 사용)
+4. 추후 URI /back-office/** - Filter 통해 Authorization 검증 (JWT or OAuth2 사용)
 5. Get 요청 시 Spring Pageable 을 통해 페이징 기능을 추가했다가 단순 결과에 집중하기 위해 제거
