@@ -18,7 +18,7 @@ import java.util.List;
 import static studio.example.lecture.domain.Lecture.*;
 
 @Profile("local")
-@Component
+//@Component
 @RequiredArgsConstructor
 public class InitData {
 
